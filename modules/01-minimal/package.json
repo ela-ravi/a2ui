@@ -1,0 +1,10 @@
+{
+  "name": "@a2ui/01-minimal",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Module 01: Minimal A2UI with text, input, and button components",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  }
+}

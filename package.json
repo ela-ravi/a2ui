@@ -1,0 +1,12 @@
+{
+  "name": "a2ui",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "modules/*"
+  ],
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0"
+  }
+}

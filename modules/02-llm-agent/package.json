@@ -1,0 +1,10 @@
+{
+  "name": "@a2ui/02-llm-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Module 02: Real LLM agent using Ollama",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  }
+}
