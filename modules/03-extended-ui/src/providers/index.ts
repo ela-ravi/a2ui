@@ -78,6 +78,7 @@ export interface StoredSettings {
   providerId: ProviderId;
   model?: string;
   apiKeys: Record<ProviderId, string>;
+  setupComplete?: boolean;
 }
 
 export function getDefaultSettings(): StoredSettings {
