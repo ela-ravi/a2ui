@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A2UI - Comparison Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.5;
+      background: #f5f5f5;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .header h1 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+    }
+    .header p {
+      margin: 0;
+      color: #666;
+    }
+
+    /* Settings */
+    #settings-container {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    .settings-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .settings-toggle button {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .settings-toggle button:hover {
+      background: #f0f0f0;
+    }
+    .current-provider {
+      font-size: 12px;
+      color: #666;
+      background: #e0e0e0;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .settings-panel {
+      display: none;
+      position: absolute;
+      top: 40px;
+      right: 0;
+      width: 320px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      z-index: 100;
+    }
+    .settings-panel.open {
+      display: block;
+    }
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+    }
+    .settings-header h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+    .settings-header button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+      padding: 0;
+      line-height: 1;
+    }
+    .settings-body {
+      padding: 16px;
+    }
+    .settings-note {
+      background: #fff8e6;
+      color: #cc8800;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin: 0 0 16px 0;
+      font-size: 14px;
+    }
+    .settings-field {
+      margin-bottom: 16px;
+    }
+    .settings-field label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .settings-field select,
+    .settings-field input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .settings-field small {
+      display: block;
+      margin-top: 4px;
+      color: #888;
+      font-size: 12px;
+    }
+    .settings-save-btn {
+      width: 100%;
+      background: #0066cc;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .settings-save-btn:hover {
+      background: #0052a3;
+    }
+    .cors-warning {
+      color: #cc0000;
+      background: #ffe6e6;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-top: 4px;
+    }
+    .env-configured {
+      background: #e6f9e6 !important;
+      color: #228b22 !important;
+      cursor: not-allowed;
+    }
+    .env-hint {
+      color: #228b22 !important;
+    }
+
+    /* Comparison container */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Panels */
+    .panel {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid #eee;
+    }
+    .panel-chatbot .panel-header {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .panel-a2ui .panel-header {
+      background: #0066cc;
+      color: white;
+    }
+    .panel-content {
+      padding: 16px;
+      min-height: 300px;
+    }
+
+    /* Chatbot panel */
+    .chatbot-message {
+      white-space: pre-wrap;
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eee;
+    }
+    .chatbot-input-area {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chatbot-input-area textarea {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .chatbot-input-area button {
+      background: #333;
+      align-self: flex-end;
+    }
+    .chatbot-input-area button:hover {
+      background: #555;
+    }
+
+    /* A2UI panel - component styles */
+    #a2ui-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Basic inputs */
+    input[type="text"], textarea, select {
+      padding: 8px;
+      font-size: 16px;
+      width: 100%;
+    }
+    textarea {
+      resize: vertical;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #0052a3;
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    /* Fieldsets for radio/checkbox */
+    fieldset {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 0;
+      border-radius: 4px;
+    }
+    fieldset legend {
+      font-weight: 500;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+      margin: 8px 0;
+    }
+
+    /* Images */
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    /* Links */
+    a {
+      color: #0066cc;
+    }
+
+    /* Divider */
+    hr {
+      border: none;
+      border-top: 1px solid #ccc;
+      margin: 16px 0;
+    }
+
+    /* Progress */
+    .progress-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    progress {
+      width: 100%;
+      height: 20px;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 8px 0;
+      padding-left: 24px;
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 12px;
+      border-radius: 4px;
+      margin: 8px 0;
+    }
+    .alert-info {
+      background: #e7f3ff;
+      color: #0066cc;
+      border: 1px solid #b3d7ff;
+    }
+    .alert-success {
+      background: #e6f9e6;
+      color: #228b22;
+      border: 1px solid #b3e6b3;
+    }
+    .alert-warning {
+      background: #fff8e6;
+      color: #cc8800;
+      border: 1px solid #ffe6b3;
+    }
+    .alert-error {
+      background: #ffe6e6;
+      color: #cc0000;
+      border: 1px solid #ffb3b3;
+    }
+
+    /* Toggle */
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toggle-wrapper label {
+      margin: 0;
+      font-weight: normal;
+    }
+
+    /* Slider */
+    .slider-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-wrapper input[type="range"] {
+      width: 100%;
+    }
+    .slider-value {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Datetime inputs */
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"] {
+      padding: 8px;
+      font-size: 16px;
+    }
+
+    /* Loading/Error states */
+    .loading {
+      color: #666;
+      font-style: italic;
+    }
+    .error {
+      color: #c00;
+    }
+    .hint {
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>A2UI Comparison Demo</h1>
+    <p>See the difference between traditional chatbot and structured UI responses</p>
+    <div id="settings-container"></div>
+  </div>
+
+  <div class="comparison">
+    <div class="panel panel-chatbot">
+      <div class="panel-header">Traditional Chatbot</div>
+      <div class="panel-content">
+        <div id="chatbot-message" class="chatbot-message"></div>
+        <div class="chatbot-input-area">
+          <textarea id="chatbot-input" rows="3" placeholder="Type your answer here..."></textarea>
+          <button id="chatbot-submit">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-a2ui">
+      <div class="panel-header">A2UI Structured Interface</div>
+      <div class="panel-content">
+        <div id="a2ui-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
